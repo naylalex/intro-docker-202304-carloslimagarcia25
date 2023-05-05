@@ -1,0 +1,42 @@
+version: "3.5"
+
+services:
+  postgres:
+    container_name: db
+    image: db:latest
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: BackOffice2022
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+    - 5432:5432
+    networks:
+    - backOffice
+  microservicio:
+    image: words:latest
+    container_name: words
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+    - 8080:8080
+    networks:
+    - backOffice
+  frontend:
+    image: web:latest
+    container_name: web
+    restart: always
+    depends_on:
+      - microservicio
+    ports:
+    - 80:80
+    networks:
+    - backOffice
+networks:
+  backOffice:
+    name: backOffice
+volumes:
+  postgres-data:
